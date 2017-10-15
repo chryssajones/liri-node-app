@@ -1,5 +1,7 @@
 var inquirer = require("inquirer");
 var Twitter = require('twitter');
+var twitterKeys = require("./keys.js");
+var client = new Twitter(twitterKeys);
 
 console.log("Ready!")
 
@@ -51,12 +53,20 @@ function getAction() {
 function tweets () {
 	// show last 20 tweets and when they were tweeted
 	console.log("----------------\nHere are your last 20 tweets:\n-------------------");
-	// var params = {screen_name: 'nodejs'};
-	// client.get('statuses/user_timeline', params, function(error, tweets, response) {
- //  		if (!error) {
- //    	console.log(tweets);
- //  		}
-	// });
+	
+	var params = {user: 'nodejs', count: 20};
+	client.get('statuses/user_timeline', params, function(error, tweets, response) {
+  		if (!error) {
+    		// console.log(tweets);
+    		for (i=0; i<tweets.length; i++) {
+    			console.log(tweets[i].created_at);
+    			console.log(tweets[i].text);
+    			console.log("----------")
+    		}
+  		} else {
+  			console.log(error)
+  		}
+	}); 
 };
 
 function spotify (title) {
