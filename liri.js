@@ -1,7 +1,13 @@
 var inquirer = require("inquirer");
+var fs = require('fs');
 var Twitter = require('twitter');
 var twitterKeys = require("./keys.js");
 var client = new Twitter(twitterKeys);
+var Spotify = require('node-spotify-api');
+var spotifyKeys = require("./keys.js");
+var spotifySearch = new Spotify(spotifyKeys);
+
+
 
 console.log("Ready!")
 
@@ -58,19 +64,44 @@ function tweets () {
 	client.get('statuses/user_timeline', params, function(error, tweets, response) {
   		if (!error) {
     		// console.log(tweets);
+    		fs.appendFile('log.txt', ("\n>>>>>>>>>> The 'tweets' function was called on " + (new Date().toUTCString()) + "<<<<<<<<<<\n"), function (err) {if (err) throw err;});
     		for (i=0; i<tweets.length; i++) {
-    			console.log(tweets[i].created_at);
-    			console.log(tweets[i].text);
-    			console.log("----------")
-    		}
+    			var output = (tweets[i].created_at + "\n" + tweets[i].text + "\n-----------\n")
+    			console.log(output);
+ 				fs.appendFile('log.txt', output, function (err) {if (err) throw err;});
+    			};
   		} else {
   			console.log(error)
   		}
 	}); 
 };
 
-function spotify (title) {
+function spotify(title) {
 	console.log("Here is the information about the song you requested: " + title);
+
+	
+	spotifySearch.search({ type: 'track', query: title, limit: 5 }, function(err, data) {
+	  if (err) {
+	    return console.log('Error occurred: ' + err);
+	  }
+	 
+	console.log(data); 
+	});
+
+
+	// spotifySearch
+	// 	.search({ type: 'track', query: title, limit: 5 })
+	// 	.then(function(response) {
+	// 		for (i=0; i<5; i++) {
+ //    			var output = (response.items[i] + "\n-----------\n")
+ //    			console.log(output);
+ // 				// fs.appendFile('log.txt', output, function (err) {if (err) throw err;});
+ //    		};
+	// 		})
+	// 	.catch(function(err) {
+	// 	console.log(err);
+	// 	});
+
 	// display:
 	// artist
 	// song name
